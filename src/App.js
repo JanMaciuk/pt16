@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Container from 'react-bootstrap/Container'
-
+import Container from 'react-bootstrap/Container';
+import Table from 'react-bootstrap/Table';
+import { Streamer } from './Components/StreamerComponent';
 
 function App() {
 
-  const [streamersData, setStreamersData] = useState(null)
-  
+  const [streamersData, setStreamersData] = useState([])
   //useEffect z pusta tablica uruchamia sie tylko raz jak componentDidMount
   const url = 'https://api.twitch.tv/helix/streams?first=20&language=pl'
   
@@ -13,20 +13,36 @@ function App() {
     const loadData = async ()=> {
       const data =  await fetch(url, {
         headers:{
-          'Client-ID': 'cecgyyqyqwufh14zvxx3q4o49tqmxr'
+          'Client-ID': '6diokkaw3yha2uty0ycs0am8pftkd3'
         }
       })
       const streams = await data.json()
+      const streamsData = streams.data.map( streamer => {
+        return {
+          username: streamer.user_name,
+          title: streamer.title,
+          viewer_count: streamer.viewer_count,
+        }
+      })
       console.log(streams)
       setStreamersData(streams.data)
     }
-    loadData() 
+    setInterval(loadData,2000) 
   } ,[])
 
 
   return (
     <Container>
-      {console.log(streamersData)}
+      <Table striped>
+        <body>
+          { streamersData.map(streamer => <Streamer 
+          user_name={streamer.user_name}
+          viewer_count={streamer.viewer_count}
+          title={streamer.title}
+          />
+          )}
+        </body>
+      </Table>
     </Container>
   );
 }
