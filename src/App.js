@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import Container from 'react-bootstrap/Container'
+
 
 function App() {
+
+  const [streamersData, setStreamersData] = useState(null)
+  
+  //useEffect z pusta tablica uruchamia sie tylko raz jak componentDidMount
+  const url = 'https://api.twitch.tv/helix/streams?first=20&language=pl'
+  
+  useEffect(() => {
+    const loadData = async ()=> {
+      const data =  await fetch(url, {
+        headers:{
+          'Client-ID': 'cecgyyqyqwufh14zvxx3q4o49tqmxr'
+        }
+      })
+      const streams = await data.json()
+      console.log(streams)
+      setStreamersData(streams.data)
+    }
+    loadData() 
+  } ,[])
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      {console.log(streamersData)}
+    </Container>
   );
 }
 
 export default App;
+
+
